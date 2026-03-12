@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Home Energy - Create Account</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: radial-gradient(circle at top left, #16213e, #0b0f1a 60%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        display: flex;
+        width: 900px;
+        max-width: 100%;
+        background-color: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .left-panel {
+        flex: 1;
+        background-color: #223155;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 40px;
+    }
+
+    .left-panel h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .left-panel p {
+        font-size: 15px;
+        margin-bottom: 25px;
+        opacity: 0.9;
+        line-height: 1.5;
+    }
+
+    .left-panel img {
+        width: 220px;
+        margin-top: 10px;
+    }
+
+    .right-panel {
+        flex: 1;
+        padding: 40px;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .title {
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .logo {
+        width: 60px;
+        height: 50px;
+        object-fit: contain;
+    }
+
+    label {
+        font-weight: 600;
+        display: block;
+        margin: 18px 0 6px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+
+    button.submit-btn {
+        width: 100%;
+        margin-top: 25px;
+        padding: 14px;
+        background-color: #364974;
+        border: none;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    button.submit-btn:hover {
+        background-color: #1d4ed8;
+    }
+
+    button.submit-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .message {
+        margin-top: 14px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .message.success {
+        color: #047857;
+    }
+
+    .message.error {
+        color: #b91c1c;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    .footer a {
+        color: #2563eb;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+        }
+    }
+</style>
+<script>
+const API_BASE_URL = "http://localhost:8081";
+
+function showMessage(text, type) {
+    const message = document.getElementById("message");
+    message.textContent = text;
+    message.className = "message " + type;
+}
+
+async function handleCreateAccount(event) {
+    event.preventDefault();
+
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const primaryInterest = document.getElementById("primaryInterest").value;
+    const submitButton = document.getElementById("createAccountBtn");
+
+    if (!fullName || !email || !password || !confirmPassword || !primaryInterest) {
+        showMessage("Please fill all fields", "error");
+        return false;
+    }
+
+    if (password !== confirmPassword) {
+        showMessage("Passwords do not match", "error");
+        return false;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Sending OTP...";
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                fullName,
+                email,
+                password,
+                primaryInterest
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to create account");
+        }
+
+        const deliveryMessage = data.message || "OTP generated.";
+        showMessage(deliveryMessage, "success");
+        window.location.href = `enter_otp.html?email=${encodeURIComponent(email)}&delivery=${encodeURIComponent(deliveryMessage)}`;
+    } catch (error) {
+        showMessage(error.message || "Something went wrong", "error");
+        submitButton.disabled = false;
+        submitButton.textContent = "Create Account";
+    }
+
+    return false;
+}
+</script>
+</head>
+<body>
+<div class="container">
+    <div class="left-panel">
+        <h1>Welcome Back!</h1>
+        <p>
+            Create your account and verify your email with OTP
+            to start your smart home journey.
+        </p>
+        <img src="/Main Logo.jpg" alt="Welcome Image">
+    </div>
+
+    <div class="right-panel">
+        <div class="header">
+            <span class="title">Smart Home Energy</span>
+            <img src="/loginlogo.png" alt="Logo" class="logo">
+        </div>
+
+        <form onsubmit="return handleCreateAccount(event)">
+            <label for="fullName">Full Name</label>
+            <input id="fullName" type="text" placeholder="Enter your full name" required minlength="4">
+
+            <label for="email">Email Address</label>
+            <input id="email" type="email" placeholder="Enter Email Address" required>
+
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Enter password" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+">
+
+            <label for="confirmPassword">Confirm Password</label>
+            <input id="confirmPassword" type="password" placeholder="Re-enter password" required>
+
+            <label for="primaryInterest">Primary Interest</label>
+            <select id="primaryInterest" required>
+                <option value="">Select an option</option>
+                <option>Energy Efficiency</option>
+                <option>Security</option>
+                <option>Comfort</option>
+                <option>Convenience</option>
+            </select>
+
+            <button id="createAccountBtn" type="submit" class="submit-btn">Create Account</button>
+            <div id="message" class="message"></div>
+        </form>
+
+        <div class="footer">
+            Already have an account?
+            <a href="sign_in.html">Sign in</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Home Energy - Sign In</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: radial-gradient(circle at top left, #16213e, #0b0f1a 60%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        display: flex;
+        width: 900px;
+        max-width: 100%;
+        background-color: #ffffff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .left-panel {
+        flex: 1;
+        background-color: #223155;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 40px;
+    }
+
+    .left-panel h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .left-panel p {
+        font-size: 15px;
+        margin-bottom: 25px;
+        opacity: 0.9;
+        line-height: 1.5;
+    }
+
+    .left-panel img {
+        width: 220px;
+        margin-top: 10px;
+    }
+
+    .right-panel {
+        flex: 1;
+        padding: 40px;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .title {
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .logo {
+        width: 60px;
+        height: 50px;
+        object-fit: contain;
+    }
+
+    label {
+        font-weight: 600;
+        display: block;
+        margin: 18px 0 6px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+
+    button {
+        width: 100%;
+        margin-top: 25px;
+        padding: 14px;
+        background-color: #364974;
+        border: none;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #1d4ed8;
+    }
+
+    .message {
+        margin-top: 14px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #047857;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    .footer a {
+        color: #2563eb;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .forgot-password {
+        text-align: center;
+        margin-top: 6px;
+         font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+        }
+    }
+</style>
+<script>
+function handleSignIn(e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("currentUser", email.split("@")[0] || "User");
+
+    window.location.href = "/landing";
+    return false;
+}
+
+</script>
+</head>
+<body>
+<div class="container">
+    <div class="left-panel">
+        <h1>Hello, Friend!</h1>
+        <p>
+            Enter your personal details<br>
+            and start your journey with us
+        </p>
+        <img src="/Main Logo.jpg" alt="Welcome Image">
+    </div>
+
+    <div class="right-panel">
+        <div class="header">
+            <span class="title">Smart Home Energy</span>
+            <img src="/loginlogo.png" alt="Logo" class="logo">
+        </div>
+
+        <form onsubmit="return handleSignIn(event)">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]+">
+
+            <div class="forgot-password">
+               <a href="forgot_password.html" style="font-size:14px; color:#2563eb; text-decoration:none;">
+               Forgot Password?
+                </a>
+                 </div>
+            <button type="submit">Sign In</button>
+        </form>
+
+        <div id="message" class="message"></div>
+
+        <div class="footer">
+            Don't have an account?
+            <a href="login.html">Create Account</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
